@@ -1,0 +1,51 @@
+#### arima#######
+pip install statsmodels
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+##data###
+
+data = pd.read_csv('C:/Users/shakk/Downloads/AirPassengers.csv')
+data = data.head(200)
+data.columns=["date", "Passanger" ]
+
+data['date'] = pd.to_datetime(data['date'])
+
+data.set_index('date', inplace=True)
+
+plt.figure(figsize=(10, 4))
+plt.plot(data)
+plt.xlabel('JAN')
+plt.ylabel('FEB')
+plt.title("Original Time Series")
+plt.grid(True)
+plt.show()    
+
+#plot,ACF,and PAcf
+fig, ax = plt.subplots(2, 1, figsize=(10, 6))
+plot_acf(data, ax=ax[0], lags=3)
+plot_pacf(data, ax=ax[1], lags=1)
+plt.show()
+# parameters
+p = 2
+d = 1
+q = 1
+model = ARIMA(data, order=(p, d, q))
+result = model.fit()
+
+data.tail()
+start_index = data.index[-1]
+end_index = '5/6/1965'
+forecast = result.predict(start=start_index, end=end_index, dynamic=False)
+
+plt.figure(figsize=(10, 4))
+plt.plot(data, label='Original Data')
+plt.plot(forecast, color='red', label='Forecast')
+plt.xlabel('MAR')
+plt.ylabel('APR')
+plt.title("ARIMA Forecast")
+plt.legend()
+plt.grid(True)
+plt.show()
